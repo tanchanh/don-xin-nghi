@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Xuất Đơn Nghỉ Phép</title>
+    <script src="https://unpkg.com/docx@7.1.0/build/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 1.1rem;
+            font-weight: normal;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0 auto;
+            max-width: 45rem;
+            padding: 1.5rem;
+            padding-bottom: 5rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 0;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            margin: .5rem;
+        }
+
+        .author {
+            font-style: normal;
+            font-size: 1.2rem;
+            text-align: right;
+            margin-bottom: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .date-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .date-input-wrapper input {
+            padding-right: 2.5rem;
+        }
+
+        .calendar-btn {
+            position: absolute;
+            right: 0.5rem;
+            background: none !important;
+            border: none !important;
+            padding: 0.25rem !important;
+            margin: 0 !important;
+            width: auto !important;
+            height: auto !important;
+            color: #718096 !important;
+            cursor: pointer;
+            box-shadow: none !important;
+            transition: color 0.2s ease !important;
+            transform: none !important;
+        }
+
+        .calendar-btn:hover {
+            color: #3182ce !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .hidden-picker {
+            position: absolute;
+            right: 0;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            padding: 0;
+            margin: 0;
+            border: none;
+            pointer-events: none;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3182ce;
+            background: #ffffff;
+            box-shadow: 0 0 0 0.2rem rgba(49, 130, 206, 0.15);
+        }
+
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+            color: #ffffff;
+            border: 2px solid transparent;
+            padding: 0.9rem 1.25rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 0.25rem 0.375rem rgba(49, 130, 206, 0.2);
+            margin-top: 0.5rem;
+        }
+
+        button:hover {
+            transform: translateY(-0.06rem);
+            box-shadow: 0 0.375rem 0.75rem rgba(49, 130, 206, 0.3);
+            background: linear-gradient(135deg, #2b6cb0 0%, #235a91 100%);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 37.5rem) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Tạo Đơn Xin Nghỉ Phép</h1>
+    <h3>Chuẩn Văn Bản Hành Chính</h3>
+    <div class="author">D.T.Chánh</div>
+    <div class="form-grid">
+        <div class="form-group full-width">
+            <label for="recipient">Kính gửi</label>
+            <input type="text" id="recipient" placeholder="Nhập nơi nhận..." value="Ban Giám Hiệu Trường Mầm Non A">
+        </div>
+        <div class="form-group">
+            <label for="fullName">Họ và tên</label>
+            <input type="text" id="fullName" placeholder="Nhập họ và tên..." value="Lưu Minh Phương">
+        </div>
+        <div class="form-group">
+            <label for="position">Chức vụ</label>
+            <input type="text" id="position" placeholder="Nhập chức vụ..." value="Giáo viên">
+        </div>
+        <div class="form-group">
+            <label for="unit">Đơn vị</label>
+            <input type="text" id="unit" placeholder="Nhập đơn vị..." value="Lớp lá 2">
+        </div>
+        <div class="form-group">
+            <label for="daysOff">Số ngày nghỉ</label>
+            <input type="number" id="daysOff" min="1" placeholder="Nhập số ngày nghỉ...">
+        </div>
+        <div class="form-group">
+            <label for="fromDate">Từ ngày (dd/mm/yyyy)</label>
+            <div class="date-input-wrapper">
+                <input type="text" id="fromDate" placeholder="dd/mm/yyyy">
+                <button type="button" class="calendar-btn" onclick="openDatePicker('fromDate-picker')">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19,4H17V3a1,1,0,0,0-2,0V4H9V3A1,1,0,0,0,7,3V4H5A2,2,0,0,0,3,6V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V6A2,2,0,0,0,19,4Zm0,15H5V9H19Zm0-12H5V6H7V7A1,1,0,0,0,9,7V6h6V7a1,1,0,0,0,2,0V6h2Z"/></svg>
+                </button>
+                <input type="date" id="fromDate-picker" class="hidden-picker" onchange="onDatePicked(this, 'fromDate')">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="toDate">Đến hết ngày (dd/mm/yyyy)</label>
+            <div class="date-input-wrapper">
+                <input type="text" id="toDate" placeholder="dd/mm/yyyy">
+                <button type="button" class="calendar-btn" onclick="openDatePicker('toDate-picker')">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19,4H17V3a1,1,0,0,0-2,0V4H9V3A1,1,0,0,0,7,3V4H5A2,2,0,0,0,3,6V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V6A2,2,0,0,0,19,4Zm0,15H5V9H19Zm0-12H5V6H7V7A1,1,0,0,0,9,7V6h6V7a1,1,0,0,0,2,0V6h2Z"/></svg>
+                </button>
+                <input type="date" id="toDate-picker" class="hidden-picker" onchange="onDatePicked(this, 'toDate')">
+            </div>
+        </div>
+        <div class="form-group full-width">
+            <label for="reason">Lý do xin nghỉ</label>
+            <input type="text" id="reason" placeholder="Nhập lý do xin nghỉ..." value="Nhà có đám cưới.">
+        </div>
+        <div class="form-group">
+            <label for="location">Địa điểm làm đơn</label>
+            <input type="text" id="location" placeholder="Nhập địa điểm..." value="Vĩnh Long">
+        </div>
+        <div class="form-group">
+            <label for="applyDate">Ngày làm đơn (dd/mm/yyyy)</label>
+            <div class="date-input-wrapper">
+                <input type="text" id="applyDate" placeholder="dd/mm/yyyy">
+                <button type="button" class="calendar-btn" onclick="openDatePicker('applyDate-picker')">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19,4H17V3a1,1,0,0,0-2,0V4H9V3A1,1,0,0,0,7,3V4H5A2,2,0,0,0,3,6V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V6A2,2,0,0,0,19,4Zm0,15H5V9H19Zm0-12H5V6H7V7A1,1,0,0,0,9,7V6h6V7a1,1,0,0,0,2,0V6h2Z"/></svg>
+                </button>
+                <input type="date" id="applyDate-picker" class="hidden-picker" onchange="onDatePicked(this, 'applyDate')">
+            </div>
+        </div>
+    </div>
+    <button onclick="generateDocx()">Xuất File DOCX</button>
+
+    <script>
+        function openDatePicker(pickerId) {
+            const picker = document.getElementById(pickerId);
+            if (picker) {
+                try {
+                    picker.showPicker();
+                } catch (e) {
+                    picker.click();
+                }
+            }
+        }
+
+        function onDatePicked(pickerElement, textInputId) {
+            const dateVal = pickerElement.value;
+            if (dateVal) {
+                const parts = dateVal.split('-');
+                if (parts.length === 3) {
+                    const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                    const textInput = document.getElementById(textInputId);
+                    if (textInput) {
+                        textInput.value = formattedDate;
+                        textInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        textInput.dispatchEvent(new Event('blur', { bubbles: true }));
+                    }
+                }
+            }
+        }
+
+        // Helper to parse date "dd/mm/yyyy" to Date object with strict validation
+        function parseDate(dateStr) {
+            if (!dateStr) return null;
+            const parts = dateStr.split('/');
+            if (parts.length === 3) {
+                const day = parseInt(parts[0], 10);
+                const month = parseInt(parts[1], 10) - 1;
+                const year = parseInt(parts[2], 10);
+                if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                    const dateObj = new Date(year, month, day);
+                    // Kiểm tra nghiêm ngặt ngày tháng thực tế (ví dụ tránh ngày 31/04 hoặc 29/02 năm không nhuận)
+                    if (dateObj.getFullYear() === year && dateObj.getMonth() === month && dateObj.getDate() === day) {
+                        return dateObj;
+                    }
+                }
+            }
+            return null;
+        }
+
+        // Helper to format Date object to "dd/mm/yyyy"
+        function formatDate(dateObj) {
+            if (!dateObj) return "";
+            const dd = String(dateObj.getDate()).padStart(2, '0');
+            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const yyyy = dateObj.getFullYear();
+            return `${dd}/${mm}/${yyyy}`;
+        }
+
+        // Automatic date and days calculations
+        document.addEventListener('DOMContentLoaded', () => {
+            const fromDateInput = document.getElementById('fromDate');
+            const toDateInput = document.getElementById('toDate');
+            const daysOffInput = document.getElementById('daysOff');
+            const applyDateInput = document.getElementById('applyDate');
+
+            // Thiết lập giá trị mặc định cho các trường ngày
+            const today = new Date();
+            const defaultToDate = new Date();
+            defaultToDate.setDate(today.getDate() + 2);
+
+            fromDateInput.value = formatDate(today);
+            applyDateInput.value = formatDate(today);
+            toDateInput.value = formatDate(defaultToDate);
+
+            function validateInputDate(inputElement) {
+                const val = inputElement.value.trim();
+                if (!val) {
+                    inputElement.style.borderColor = '#e2e8f0';
+                    inputElement.style.background = '#f8fafc';
+                    return false;
+                }
+                const dateObj = parseDate(val);
+                if (!dateObj) {
+                    inputElement.style.borderColor = '#e53e3e';
+                    inputElement.style.background = '#fff5f5';
+                    return false;
+                } else {
+                    inputElement.style.borderColor = '#e2e8f0';
+                    inputElement.style.background = '#ffffff';
+                    return true;
+                }
+            }
+
+            function clearValidation(inputElement) {
+                const dateObj = parseDate(inputElement.value.trim());
+                if (dateObj) {
+                    inputElement.style.borderColor = '#e2e8f0';
+                    inputElement.style.background = '#ffffff';
+                }
+            }
+
+            function onFromDateInput() {
+                const fromDateVal = fromDateInput.value.trim();
+                const toDateVal = toDateInput.value.trim();
+                const fromDateObj = parseDate(fromDateVal);
+                const toDateObj = parseDate(toDateVal);
+
+                if (fromDateObj) {
+                    if (toDateObj && fromDateObj > toDateObj) {
+                        toDateInput.value = fromDateVal;
+                        daysOffInput.value = 1;
+                        validateInputDate(toDateInput);
+                    } else if (toDateObj) {
+                        const diffTime = toDateObj - fromDateObj;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                        if (diffDays > 0) {
+                            daysOffInput.value = diffDays;
+                        }
+                    }
+                }
+            }
+
+            function onToDateInput() {
+                const fromDateVal = fromDateInput.value.trim();
+                const toDateVal = toDateInput.value.trim();
+                const fromDateObj = parseDate(fromDateVal);
+                const toDateObj = parseDate(toDateVal);
+
+                if (toDateObj && fromDateObj) {
+                    if (toDateObj < fromDateObj) {
+                        toDateInput.value = fromDateVal;
+                        daysOffInput.value = 1;
+                    } else {
+                        const diffTime = toDateObj - fromDateObj;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                        if (diffDays > 0) {
+                            daysOffInput.value = diffDays;
+                        }
+                    }
+                }
+            }
+
+            function onDaysOffInput() {
+                const fromDateVal = fromDateInput.value.trim();
+                const daysOffVal = parseInt(daysOffInput.value, 10);
+                const fromDateObj = parseDate(fromDateVal);
+
+                if (fromDateObj && !isNaN(daysOffVal) && daysOffVal > 0) {
+                    const toDateObj = new Date(fromDateObj);
+                    toDateObj.setDate(fromDateObj.getDate() + daysOffVal - 1);
+                    toDateInput.value = formatDate(toDateObj);
+                    validateInputDate(toDateInput);
+                }
+            }
+
+            fromDateInput.addEventListener('input', () => {
+                onFromDateInput();
+                clearValidation(fromDateInput);
+            });
+            toDateInput.addEventListener('input', () => {
+                onToDateInput();
+                clearValidation(toDateInput);
+            });
+            daysOffInput.addEventListener('input', onDaysOffInput);
+
+            applyDateInput.addEventListener('input', () => {
+                clearValidation(applyDateInput);
+            });
+
+            fromDateInput.addEventListener('blur', () => validateInputDate(fromDateInput));
+            toDateInput.addEventListener('blur', () => validateInputDate(toDateInput));
+            applyDateInput.addEventListener('blur', () => validateInputDate(applyDateInput));
+
+            // Tính toán lại số ngày nghỉ dựa trên các giá trị mặc định ban đầu
+            onFromDateInput();
+        });
+
+        function generateDocx() {
+            const fromDate = document.getElementById('fromDate').value.trim();
+            const toDate = document.getElementById('toDate').value.trim();
+            const applyDate = document.getElementById('applyDate').value.trim();
+
+            const fromDateObj = parseDate(fromDate);
+            const toDateObj = parseDate(toDate);
+            const applyDateObj = parseDate(applyDate);
+
+            if (!fromDateObj) {
+                alert("Ngày bắt đầu nghỉ phép (Từ ngày) không hợp lệ!\nVui lòng nhập đúng định dạng ngày tháng Việt Nam dd/mm/yyyy (Ví dụ: 10/06/2026) và đảm bảo ngày đó có thật.");
+                document.getElementById('fromDate').focus();
+                return;
+            }
+            if (!toDateObj) {
+                alert("Ngày kết thúc nghỉ phép (Đến hết ngày) không hợp lệ!\nVui lòng nhập đúng định dạng ngày tháng Việt Nam dd/mm/yyyy (Ví dụ: 13/06/2026) và đảm bảo ngày đó có thật.");
+                document.getElementById('toDate').focus();
+                return;
+            }
+            if (!applyDateObj) {
+                alert("Ngày làm đơn không hợp lệ!\nVui lòng nhập đúng định dạng ngày tháng Việt Nam dd/mm/yyyy (Ví dụ: 10/06/2026) và đảm bảo ngày đó có thật.");
+                document.getElementById('applyDate').focus();
+                return;
+            }
+
+            const fullName = document.getElementById('fullName').value.trim();
+            const position = document.getElementById('position').value.trim();
+            const unit = document.getElementById('unit').value.trim();
+            const daysOff = document.getElementById('daysOff').value.trim();
+            const recipient = document.getElementById('recipient').value.trim();
+            const reason = document.getElementById('reason').value.trim();
+            const location = document.getElementById('location').value.trim();
+
+            const { Document, Packer, Paragraph, TextRun, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle, convertMillimetersToTwip, Header, PageNumber } = docx;
+
+            // Helper to format date "dd/mm/yyyy" to "ngày DD tháng MM năm YYYY"
+            function formatDateVietnamese(dateStr) {
+                if (!dateStr) return "";
+                const parts = dateStr.split('/');
+                if (parts.length === 3) {
+                    return `ngày ${parts[0]} tháng ${parts[1]} năm ${parts[2]}`;
+                }
+                return dateStr;
+            }
+
+            // Helper to create paragraph conforming to administrative formatting rules
+            function createP(textOrRuns, options = {}) {
+                let children = [];
+                if (typeof textOrRuns === "string") {
+                    children = [new TextRun({ text: textOrRuns })];
+                } else if (Array.isArray(textOrRuns)) {
+                    children = textOrRuns;
+                }
+                return new Paragraph({
+                    alignment: options.alignment || AlignmentType.JUSTIFIED,
+                    spacing: {
+                        line: options.line !== undefined ? options.line : 288, // 1.2 lines
+                        after: options.after !== undefined ? options.after : 120, // 6pt
+                        before: options.before || 0,
+                    },
+                    children: children,
+                });
+            }
+
+            const doc = new Document({
+                styles: {
+                    default: {
+                        document: {
+                            run: {
+                                size: 28, // 14pt default
+                                font: "Times New Roman",
+                                color: "000000",
+                            }
+                        }
+                    }
+                },
+                sections: [{
+                    properties: {
+                        titlePage: true,
+                        page: {
+                            size: {
+                                width: convertMillimetersToTwip(210),
+                                height: convertMillimetersToTwip(297),
+                            },
+                            margin: {
+                                top: convertMillimetersToTwip(20),
+                                bottom: convertMillimetersToTwip(20),
+                                left: convertMillimetersToTwip(30),
+                                right: convertMillimetersToTwip(15),
+                            }
+                        }
+                    },
+                    headers: {
+                        default: new Header({
+                            children: [
+                                new Paragraph({
+                                    alignment: AlignmentType.CENTER,
+                                    children: [
+                                        new TextRun({
+                                            children: [PageNumber.CURRENT],
+                                            font: "Times New Roman",
+                                            size: 28, // 14pt
+                                        })
+                                    ]
+                                })
+                            ]
+                        })
+                    },
+                    children: [
+                        createP([new TextRun({ text: "CỘNG HOÀ XÃ HỘI CHỦ NGHĨA VIỆT NAM", bold: true, size: 26 })], { alignment: AlignmentType.CENTER, after: 0, line: 240 }),
+                        createP([new TextRun({ text: "Độc lập - Tự do - Hạnh phúc", bold: true, size: 28 })], { alignment: AlignmentType.CENTER, after: 0, line: 240 }),
+                        createP([new TextRun({ text: "_______________", size: 28 })], { alignment: AlignmentType.CENTER, after: 240, line: 240 }),
+                        createP([], { before: 240 }),
+                        createP([new TextRun({ text: "ĐƠN XIN NGHỈ PHÉP", bold: true, size: 28 })], { alignment: AlignmentType.CENTER, after: 240 }),
+                        createP([], { before: 240 }),
+                        createP([new TextRun({ text: "Kính gửi: ", bold: true, size: 28 }), new TextRun({ text: recipient, size: 28 })], { alignment: AlignmentType.LEFT }),
+                        createP([new TextRun({ text: "Tôi tên là: ", bold: true, size: 28 }), new TextRun({ text: fullName, size: 28 })], { alignment: AlignmentType.LEFT }),
+                        createP([new TextRun({ text: "Chức vụ: ", bold: true, size: 28 }), new TextRun({ text: position, size: 28 })], { alignment: AlignmentType.LEFT }),
+                        createP([new TextRun({ text: "Đơn vị: ", bold: true, size: 28 }), new TextRun({ text: unit, size: 28 })], { alignment: AlignmentType.LEFT }),
+                        createP("Nay tôi làm đơn này xin phép " + recipient + " cho tôi được tạm nghỉ làm việc trong thời gian " + daysOff.toString().padStart(2, '0') + " ngày (từ ngày " + fromDate + " đến hết ngày " + toDate + ").", { alignment: AlignmentType.JUSTIFIED }),
+                        createP([new TextRun({ text: "Lý do xin nghỉ: ", bold: true, size: 28 }), new TextRun({ text: reason, size: 28 })], { alignment: AlignmentType.JUSTIFIED }),
+                        createP([new TextRun({ text: "Tôi xin chân thành cảm ơn!", size: 28 })], { alignment: AlignmentType.LEFT }),
+                        createP([new TextRun({ text: location + ", " + formatDateVietnamese(applyDate), italic: true, size: 28 })], { alignment: AlignmentType.RIGHT, after: 240 }),
+                        new Table({
+                            columnWidths: [convertMillimetersToTwip(82.5), convertMillimetersToTwip(82.5)],
+                            width: { size: 100, type: WidthType.PERCENTAGE },
+                            alignment: AlignmentType.CENTER,
+                            borders: {
+                                top: { style: BorderStyle.NONE, size: 0, color: "auto" },
+                                bottom: { style: BorderStyle.NONE, size: 0, color: "auto" },
+                                left: { style: BorderStyle.NONE, size: 0, color: "auto" },
+                                right: { style: BorderStyle.NONE, size: 0, color: "auto" },
+                                insideHorizontal: { style: BorderStyle.NONE, size: 0, color: "auto" },
+                                insideVertical: { style: BorderStyle.NONE, size: 0, color: "auto" },
+                            },
+                            rows: [
+                                new TableRow({
+                                    children: [
+                                        new TableCell({
+                                            width: { size: 50, type: WidthType.PERCENTAGE },
+                                            children: [createP([new TextRun({ text: "Ý KIẾN", bold: true, size: 28 })], { alignment: AlignmentType.CENTER, after: 120 })]
+                                        }),
+                                        new TableCell({
+                                            width: { size: 50, type: WidthType.PERCENTAGE },
+                                            children: [createP([new TextRun({ text: "NGƯỜI LÀM ĐƠN", bold: true, size: 28 })], { alignment: AlignmentType.CENTER, after: 120 })]
+                                        }),
+                                    ]
+                                }),
+                                new TableRow({
+                                    children: [
+                                        new TableCell({
+                                            width: { size: 50, type: WidthType.PERCENTAGE },
+                                            children: []
+                                        }),
+                                        new TableCell({
+                                            width: { size: 50, type: WidthType.PERCENTAGE },
+                                            children: [
+                                                createP([new TextRun({ text: "(Ký, ghi rõ họ tên)", italic: true, size: 24 })], { alignment: AlignmentType.CENTER, after: 120 }),
+                                                new Paragraph({ text: "", spacing: { before: 1200 } }),
+                                                createP([new TextRun({ text: fullName, bold: true, size: 28 })], { alignment: AlignmentType.CENTER, after: 120 }),
+                                            ]
+                                        }),
+                                    ]
+                                })
+                            ]
+                        })
+                    ]
+                }]
+            });
+
+            Packer.toBlob(doc).then(blob => {
+                saveAs(blob, "don_xin_nghi_phep.docx");
+            });
+        }
+    </script>
+</body>
+
+</html>
