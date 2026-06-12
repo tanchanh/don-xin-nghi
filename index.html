@@ -21,7 +21,7 @@
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             margin: 0 auto;
             max-width: 45rem;
-            padding: 1.5rem;
+            padding: 0.5rem;
             padding-bottom: 5rem;
         }
 
@@ -44,6 +44,7 @@
             font-size: 1.2rem;
             text-align: right;
             margin-bottom: 1rem;
+            margin-right: 0.5rem;
         }
 
         .form-grid {
@@ -65,7 +66,7 @@
             display: block;
             font-size: 1rem;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin: 0rem 0.5rem 0.2rem 0.5rem;
             text-transform: uppercase;
             letter-spacing: 0.03rem;
         }
@@ -138,7 +139,7 @@
             background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
             color: #ffffff;
             border: 2px solid transparent;
-            padding: 0.9rem 1.25rem;
+            padding: 1rem 1rem;
             border-radius: 0.5rem;
             cursor: pointer;
             font-size: 1.1rem;
@@ -210,7 +211,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="toDate">Đến hết ngày (dd/mm/yyyy)</label>
+            <label for="toDate">Đến hết ngày</label>
             <div class="date-input-wrapper">
                 <input type="text" id="toDate" placeholder="dd/mm/yyyy">
                 <button type="button" class="calendar-btn" onclick="openDatePicker('toDate-picker')">
@@ -227,11 +228,11 @@
             <input type="text" id="reason" placeholder="Nhập lý do xin nghỉ..." value="Nhà có đám cưới.">
         </div>
         <div class="form-group">
-            <label for="location">Địa điểm làm đơn</label>
+            <label for="location">Nơi làm đơn</label>
             <input type="text" id="location" placeholder="Nhập địa điểm..." value="Vĩnh Long">
         </div>
         <div class="form-group">
-            <label for="applyDate">Ngày làm đơn (dd/mm/yyyy)</label>
+            <label for="applyDate">Ngày làm đơn</label>
             <div class="date-input-wrapper">
                 <input type="text" id="applyDate" placeholder="dd/mm/yyyy">
                 <button type="button" class="calendar-btn" onclick="openDatePicker('applyDate-picker')">
